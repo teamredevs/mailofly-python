@@ -34,7 +34,10 @@ def request(
             )
 
     url = f"{base_url.rstrip('/')}{path}"
-    headers: dict[str, str] = {"Accept": "application/json"}
+    headers: dict[str, str] = {
+        "Accept": "application/json",
+        "X-Mailofly-Client": "sdk/python",
+    }
     if api_key:
         headers["Authorization"] = f"Bearer {api_key}"
     if body is not None:
