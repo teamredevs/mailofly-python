@@ -19,6 +19,7 @@ class Mailofly:
         self.segments = _Segments(self)
         self.campaigns = _Campaigns(self)
         self.compose = _Compose(self)
+        self.emails = _Emails(self)
         self.mail_logs = _MailLogs(self)
 
     @staticmethod
@@ -188,8 +189,17 @@ class _Compose:
         self._c = client
 
     def send(self, params: dict[str, Any]) -> Any:
-        """Send one-off email via POST /compose."""
-        return self._c._req("/compose", method="POST", body=params)
+        """Send email via POST /emails (deprecated — use client.emails)."""
+        return self._c._req("/emails", method="POST", body=params)
+
+
+class _Emails:
+    def __init__(self, client: Mailofly) -> None:
+        self._c = client
+
+    def send(self, params: dict[str, Any]) -> Any:
+        """Send transactional email via POST /emails."""
+        return self._c._req("/emails", method="POST", body=params)
 
 
 class _MailLogs:

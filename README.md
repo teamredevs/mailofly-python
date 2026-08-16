@@ -21,13 +21,13 @@ from mailofly import Mailofly, MailoflyError
 client = Mailofly(os.environ["MAILOFLY_API_KEY"])
 
 try:
-    result = client.compose.send({
-        "account_key": "acc_…",
+    result = client.emails.send({
+        "from": "Acme <onboarding@example.com>",
+        "to": ["you@example.com"],
         "subject": "Hello",
-        "body": "<p>Hi from Mailofly</p>",
-        "recipients": {"emails": ["you@example.com"]},
+        "html": "<p>Hi from Mailofly</p>",
     })
-    print(result)
+    print(result["id"])
 except MailoflyError as e:
     print(e.status, e.error, e.detail_message)
 ```
