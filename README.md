@@ -30,6 +30,13 @@ try:
     print(result["id"])
 except MailoflyError as e:
     print(e.status, e.error, e.detail_message)
+
+# Batch (up to 100 emails)
+batch = client.batch.send([
+    {"from": "Acme <onboarding@example.com>", "to": ["a@b.com"], "subject": "Hi", "html": "<p>1</p>"},
+    {"from": "Acme <onboarding@example.com>", "to": ["c@d.com"], "subject": "Hi", "html": "<p>2</p>"},
+])
+print(batch["data"])
 ```
 
 ## Docs

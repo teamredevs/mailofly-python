@@ -20,6 +20,7 @@ class Mailofly:
         self.campaigns = _Campaigns(self)
         self.compose = _Compose(self)
         self.emails = _Emails(self)
+        self.batch = _Batch(self)
         self.mail_logs = _MailLogs(self)
 
     @staticmethod
@@ -200,6 +201,36 @@ class _Emails:
     def send(self, params: dict[str, Any]) -> Any:
         """Send transactional email via POST /emails."""
         return self._c._req("/emails", method="POST", body=params)
+
+    def get(self, email_id: str) -> Any:
+        """Retrieve sent email via GET /emails/{id}."""
+        return self._c._req(f"/emails/{enc(email_id)}")
+
+    def list(
+        self,
+        *,
+        limit: int | None = None,
+        after: str | None = None,
+        before: str | None = None,
+    ) -> Any:
+        """List sent emails via GET /emails (Resend cursor pagination)."""
+        query: dict[str, Any] = {}
+        if limit is not None:
+            query["limit"] = limit
+        if after:
+            query["after"] = after
+        if before:
+            query["before"] = before
+        return self._c._req("/emails", query=query or None)
+
+
+class _Batch:
+    def __init__(self, client: Mailofly) -> None:
+        self._c = client
+
+    def send(self, emails: list[dict[str, Any]]) -> Any:
+        """Send up to 100 emails via POST /emails/batch."""
+        return self._c._req("/emails/batch", method="POST", body=emails)
 
 
 class _MailLogs:
