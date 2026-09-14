@@ -13,7 +13,8 @@ class Mailofly:
             raise ValueError("Mailofly: api_key is required")
         self._api_key = api_key.strip()
         self._base_url = normalize_base_url(base_url)
-        self.accounts = _Accounts(self)
+        self.identities = _Identities(self)
+        self.accounts = self.identities
         self.contacts = _Contacts(self)
         self.templates = _Templates(self)
         self.segments = _Segments(self)
@@ -50,24 +51,21 @@ class Mailofly:
         )
 
 
-class _Accounts:
+class _Identities:
     def __init__(self, client: Mailofly) -> None:
         self._c = client
 
     def list(self) -> Any:
-        return self._c._req("/accounts")
-
-    def create(self, body: dict[str, Any]) -> Any:
-        return self._c._req("/accounts", method="POST", body=body)
+        return self._c._req("/identities")
 
     def get(self, id: str) -> Any:
-        return self._c._req(f"/accounts/{enc(id)}")
+        return self._c._req(f"/identities/{enc(id)}")
 
     def update(self, id: str, body: dict[str, Any]) -> Any:
-        return self._c._req(f"/accounts/{enc(id)}", method="PATCH", body=body)
+        return self._c._req(f"/identities/{enc(id)}", method="PATCH", body=body)
 
     def delete(self, id: str) -> Any:
-        return self._c._req(f"/accounts/{enc(id)}", method="DELETE")
+        return self._c._req(f"/identities/{enc(id)}", method="DELETE")
 
 
 class _Contacts:
