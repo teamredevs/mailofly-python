@@ -8,7 +8,7 @@ import httpx
 from .errors import MailoflyError
 
 DEFAULT_BASE_URL = "https://api.mailofly.com"
-API_PREFIX = "/api/v1"
+API_PREFIX = ""
 
 
 def normalize_base_url(base_url: str | None) -> str:

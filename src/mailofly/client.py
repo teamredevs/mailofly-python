@@ -26,10 +26,10 @@ class Mailofly:
 
     @staticmethod
     def discovery(*, base_url: str | None = None) -> Any:
-        """Unauthenticated discovery (`GET /api/v1`)."""
+        """Unauthenticated discovery (`GET /`)."""
         return request(
             base_url=normalize_base_url(base_url),
-            path=API_PREFIX,
+            path=API_PREFIX or "/",
             method="GET",
         )
 
