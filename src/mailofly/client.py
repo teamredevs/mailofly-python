@@ -23,6 +23,8 @@ class Mailofly:
         self.emails = _Emails(self)
         self.batch = _Batch(self)
         self.mail_logs = _MailLogs(self)
+        self.automations = _Automations(self)
+        self.events = _Events(self)
 
     @staticmethod
     def discovery(*, base_url: str | None = None) -> Any:
@@ -256,3 +258,90 @@ class _MailLogs:
                 "status": status,
             },
         )
+
+
+class _AutomationRuns:
+    def __init__(self, client: Mailofly) -> None:
+        self._c = client
+
+    def list(
+        self,
+        automation_id: str,
+        *,
+        status: str | None = None,
+        limit: int | None = None,
+    ) -> Any:
+        query: dict[str, Any] = {}
+        if status:
+            query["status"] = status
+        if limit is not None:
+            query["limit"] = limit
+        return self._c._req(
+            f"/automations/{enc(automation_id)}/runs",
+            query=query or None,
+        )
+
+    def get(self, automation_id: str, run_id: str) -> Any:
+        return self._c._req(
+            f"/automations/{enc(automation_id)}/runs/{enc(run_id)}"
+        )
+
+
+class _Automations:
+    def __init__(self, client: Mailofly) -> None:
+        self._c = client
+        self.runs = _AutomationRuns(client)
+
+    def list(self, *, status: str | None = None, limit: int | None = None) -> Any:
+        query: dict[str, Any] = {}
+        if status:
+            query["status"] = status
+        if limit is not None:
+            query["limit"] = limit
+        return self._c._req("/automations", query=query or None)
+
+    def create(self, body: dict[str, Any]) -> Any:
+        return self._c._req("/automations", method="POST", body=body)
+
+    def get(self, id: str) -> Any:
+        return self._c._req(f"/automations/{enc(id)}")
+
+    def update(self, id: str, body: dict[str, Any]) -> Any:
+        return self._c._req(f"/automations/{enc(id)}", method="PATCH", body=body)
+
+    def delete(self, id: str) -> Any:
+        return self._c._req(f"/automations/{enc(id)}", method="DELETE")
+
+    def stop(self, id: str) -> Any:
+        return self._c._req(f"/automations/{enc(id)}/stop", method="POST")
+
+    def duplicate(self, id: str) -> Any:
+        return self._c._req(f"/automations/{enc(id)}/duplicate", method="POST")
+
+
+class _Events:
+    def __init__(self, client: Mailofly) -> None:
+        self._c = client
+
+    def send(self, params: dict[str, Any]) -> Any:
+        return self._c._req("/events/send", method="POST", body=params)
+
+    def list(
+        self,
+        *,
+        name: str | None = None,
+        email: str | None = None,
+        limit: int | None = None,
+    ) -> Any:
+        query: dict[str, Any] = {}
+        if name:
+            query["name"] = name
+        if email:
+            query["email"] = email
+        if limit is not None:
+            query["limit"] = limit
+        return self._c._req("/events", query=query or None)
+
+    def get(self, id: str) -> Any:
+        return self._c._req(f"/events/{enc(id)}")
+
